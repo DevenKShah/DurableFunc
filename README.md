@@ -34,26 +34,6 @@ create table ReceivedFileHistory (
 ```
 
 ## To Debug
-Drop a message on the queue. Below is a sample c# code on how to drop the message
-``` c#
-private static void SendMessage()
-{
-	string connectionString = "UseDevelopmentStorage=true";
-	var queueClient = new QueueClient(connectionString, "filereceived-queue");
-  
-  var filename = Guid.NewGuid().ToString();
-	var msg1 = JsonSerializer.Serialize(new FileReceivedMessage(filename, "TN"));
-  queueClient.SendMessage(Convert.ToBase64String(Encoding.UTF8.GetBytes(msg1)));
- }
- 
-class FileReceivedMessage
-{
-	public string FileName { get; set; }
-	public string FileExtension { get; set; }
-	public FileReceivedMessage(string fileName, string fileExtension)
-	{
-		FileName = fileName;
-		FileExtension = fileExtension;
-	}
-}
-```
+
+`KickOffDurableOrchestrationFunction` is a Http triggered function that allows you to drop messages on the queue. Each of these messages will trigger the orchestrator function. 
+The route to the http trigger is `/api/sendmessages/{noOfMsgs}`, where you need to replace `{noOfMsgs}` with number of messages you would like to send. For example `/api/sendmessages/2`. 
