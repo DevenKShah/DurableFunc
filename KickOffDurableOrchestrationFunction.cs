@@ -16,14 +16,11 @@ namespace DurableFunc.HttpTrigger
     {
         [FunctionName("KickOffDurableOrchestrationFunction")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "sendmessages/{noOfMsgs}")] HttpRequest req,
+            int noOfMsgs,
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
-
-            string numberOfMessages = req.Query["numberofmessages"];
-            if(string.IsNullOrWhiteSpace(numberOfMessages)) return new BadRequestResult();
-            if(!int.TryParse(numberOfMessages, out var noOfMsgs)) return new BadRequestResult();
 
             await SendMessages(noOfMsgs);
 
